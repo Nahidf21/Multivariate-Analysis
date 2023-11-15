@@ -1,0 +1,50 @@
+---
+title: "Hierarchical Aggolomerative Clustering"
+author: "Nahid Ferdous"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r}
+d <- matrix(c(0,1,2,8,1,0,7,9,2,7,0,6,8,9,6,0), ncol = 4, byrow = T)
+d <- as.dist(d)
+
+hc <- hclust(d, "single")
+plot(hc, main = "Hierarcical Aggolomerative Clustering Dendogram - Single")
+```
+```{r}
+hc <- hclust(d, "complete")
+plot(hc, main = "Hierarcical Aggolomerative Clustering Dendogram - Complete")
+```
+```{r}
+hc <- hclust(d, "average")
+plot(hc, main = "Hierarcical Aggolomerative Clustering Dendogram - average")
+```
+```{r}
+crime <- read.csv("https://raw.githubusercontent.com/asheikhz2/TTU_Zadeh/main/crime.csv", row.names = "STATE")
+crime_s <- scale(crime)
+dist_crime <- dist(crime_s)
+```
+
+```{r}
+hc_crime <- hclust(dist_crime, "complete")
+plot(hc_crime, main = "complete", cex = .5)
+```
+```{r}
+#names(hc_crime)
+plot(rev(hc_crime$height))
+
+```
+From the height plot we can interprate in the crime data we have 4 clusters.
+```{r}
+ct <- cutree(hc_crime, 2)
+head((ct))
+crime_cluster_df <- as.data.frame(ct)
+table(crime_cluster_df)
+```
+```{r}
+plot(crime[,c(2:5)], col= ct)
+```
+
+
+
