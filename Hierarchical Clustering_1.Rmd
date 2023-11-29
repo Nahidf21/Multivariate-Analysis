@@ -1,0 +1,56 @@
+```{r}
+crime <- read.csv("https://raw.githubusercontent.com/asheikhz2/TTU_Zadeh/main/crime.csv", row.names = "STATE")
+crime.s <- scale(crime)
+crime_dist <- dist(crime.s)
+```
+
+Lets Apply HC 
+```{r}
+hc <- hclust(crime_dist)
+hc
+```
+```{r}
+plot(hc, cex=.5)
+```
+```{r}
+plot(rev(hc$height))
+```
+```{r}
+plot(hc, col = "black", cex= .5)
+abline(h=5, col = "red")
+```
+```{r}
+ct <- cutree(hc, h=5)
+ct
+```
+```{r}
+table(ct)
+```
+```{r}
+ct <- cutree(hc, k=4)
+table(ct)
+```
+```{r}
+cluster1 <- subset(rownames(crime), ct==1)
+cluster2 <- subset(rownames(crime.s), ct==2)
+cluster3 <- subset(rownames(crime), ct==3)
+cluster4 <- subset(rownames(crime.s), ct==4)
+
+index1 <- match(cluster1, rownames(crime.s))
+index2 <- match(cluster2, rownames(crime.s))
+index3 <- match(cluster3, rownames(crime.s))
+index4 <- match(cluster4, rownames(crime.s))
+
+clust1mean <- colMeans(crime.s[index1,])
+clust2mean <- colMeans(crime.s[index2,])
+clust3mean <- colMeans(crime.s[index3,])
+clust4mean <- colMeans(crime.s[index4,])
+
+clusterMeans <- rbind(clust1mean, clust2mean, clust3mean, clust4mean)
+library(knitr)
+kable(clusterMeans, main= "Cloumns Means of clusters")
+```
+```{r}
+
+```
+
