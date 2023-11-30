@@ -1,0 +1,60 @@
+```{r}
+crime <- read.csv("https://raw.githubusercontent.com/asheikhz2/TTU_Zadeh/main/crime.csv", row.names = "STATE")
+crime.s <- scale(crime)
+```
+
+apply k means clustering 
+```{r}
+km <- kmeans(crime.s, centers = 4)
+table(km$cluster)
+```
+
+```{r}
+subset(crime.s, km$cluster ==1)
+```
+```{r}
+claster_means <- km$centers
+rownames(claster_means) <- c("cluster_1", "cluster_2", "cluster_3", "cluster_4")
+claster_means
+```
+cluster 1 is highly rated for violence crime and low rate of property crime 
+cluster 2 is highly rated for violence and property crime
+cluster 3 is highly rated for property crime and less rated in violence crime 
+cluster 4 is lower rated in property and violence crime.
+
+```{r}
+km$tot.withinss
+```
+tot.withnss shows the wgss value of the km, the lower with in group sum of squeres value is good for clustering.
+
+```{r}
+# here we will fixed our clustering stapes using nstart= some value 
+km <- kmeans(crime.s, centers = 3, nstart = 10)
+table(km$cluster)
+```
+now if we rerun our program we dont get different results.
+
+```{r}
+# lets check the wgss value for claster 3 
+km$tot.withinss
+```
+So this cluster 4 is batter than clauser 3. Then we will consider number of cluster 3.
+
+```{r}
+# k means doesn't have buildin scree plot function, thats why we need to build a scree plot function
+
+plot.wgss <- function(mydata, maxc){
+  wgss <- numeric(maxc)
+  for(i in 1:maxc){
+    km<- kmeans(mydata, centers = i, nstart = 10)
+    wgss[i] <- km$tot.withinss
+  }
+  plot(1:maxc, wgss, type="b", xlab= "Number of cluster", ylab = "within groups sum of squares", main= "Scree Plot")
+}
+
+plot.wgss(crime.s, nrow(crime.s)-1)
+```
+
+From this Scree plot we can consider 3 cluster using Elbow method.
+
+
